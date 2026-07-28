@@ -1,0 +1,704 @@
+<!DOCTYPE html>
+<html lang="en" data-theme="light">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Library Management System - Dashboard</title>
+  <!-- Google Fonts & Bootstrap Icons -->
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.3/font/bootstrap-icons.min.css">
+  <link rel="stylesheet" href="css/styles.css">
+  <!-- Chart.js for analytics visualization -->
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+</head>
+<body>
+
+  <div class="app-container">
+    <!-- Sidebar Navigation -->
+    <aside class="sidebar" id="sidebar">
+      <div class="sidebar-header">
+        <div class="sidebar-logo-icon">
+          <i class="bi bi-journal-bookmark-fill"></i>
+        </div>
+        <span class="sidebar-brand">LibCore LMS</span>
+      </div>
+
+      <ul class="sidebar-menu">
+        <li class="menu-category">Main Menu</li>
+        <li>
+          <a href="#" class="sidebar-link active" data-view="dashboard">
+            <i class="bi bi-grid-1x2-fill"></i>
+            <span>Dashboard</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="books">
+            <i class="bi bi-book-half"></i>
+            <span>Book Catalog</span>
+            <span class="badge-count" id="nav-book-count">7</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="students">
+            <i class="bi bi-people-fill"></i>
+            <span>Student Directory</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="issues">
+            <i class="bi bi-arrow-left-right"></i>
+            <span>Issue & Return</span>
+            <span class="badge-count danger" id="nav-overdue-count">2</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="fines">
+            <i class="bi bi-cash-stack"></i>
+            <span>Fine Management</span>
+          </a>
+        </li>
+
+        <li class="menu-category">Analytics & Tools</li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="reports">
+            <i class="bi bi-file-earmark-bar-graph-fill"></i>
+            <span>Reports & Exports</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="reservations">
+            <i class="bi bi-bookmark-heart-fill"></i>
+            <span>Wishlist & Queue</span>
+          </a>
+        </li>
+        <li>
+          <a href="#" class="sidebar-link" data-view="audit">
+            <i class="bi bi-shield-check"></i>
+            <span>Audit Logs</span>
+          </a>
+        </li>
+      </ul>
+    </aside>
+
+    <!-- Main Wrapper -->
+    <div class="main-wrapper">
+      <!-- Top Navbar -->
+      <header class="top-navbar">
+        <div style="display: flex; align-items: center; gap: 16px;">
+          <button class="icon-btn" id="sidebar-toggle" title="Toggle Sidebar">
+            <i class="bi bi-list"></i>
+          </button>
+
+          <div class="search-bar">
+            <i class="bi bi-search" style="color: var(--text-muted);"></i>
+            <input type="text" id="global-search" placeholder="Search books by title, author, ISBN, category...">
+          </div>
+        </div>
+
+        <div class="navbar-actions">
+          <!-- Role Switcher Quick Demo -->
+          <div class="role-switcher" title="Switch User Role View">
+            <button class="role-btn active" data-role="ROLE_ADMIN">Admin</button>
+            <button class="role-btn" data-role="ROLE_LIBRARIAN">Librarian</button>
+            <button class="role-btn" data-role="ROLE_STUDENT">Student</button>
+          </div>
+
+          <!-- Dark/Light Theme Switcher -->
+          <button class="icon-btn" id="theme-toggle" title="Toggle Dark/Light Mode">
+            <i class="bi bi-moon-stars-fill" id="theme-icon"></i>
+          </button>
+
+          <!-- Notification Bell -->
+          <div style="position: relative;">
+            <button class="icon-btn" id="notification-btn" title="Notifications">
+              <i class="bi bi-bell-fill"></i>
+              <span class="notification-badge" id="notification-count">2</span>
+            </button>
+          </div>
+
+          <!-- User Profile -->
+          <div class="user-profile-menu" id="profile-dropdown-btn">
+            <img src="https://images.unsplash.com/photo-1534528741775-53994a69daeb?w=150" alt="Avatar" class="user-avatar" id="header-avatar">
+            <div class="user-info">
+              <span class="user-name" id="header-user-name">Admin User</span>
+              <span class="user-role-tag" id="header-user-role">Administrator</span>
+            </div>
+          </div>
+        </div>
+      </header>
+
+      <!-- Main Body Content Views -->
+      <main class="content-body">
+
+        <!-- 1. DASHBOARD VIEW -->
+        <section id="view-dashboard" class="view-section active">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-speedometer2" style="color: var(--primary);"></i> Library Overview Dashboard</h1>
+              <p class="page-subtitle">Real-time stats, circulation metrics, and operational summaries.</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn btn-outline" id="quick-qr-btn"><i class="bi bi-qr-code-scan"></i> QR Scan Issue</button>
+              <button class="btn btn-primary" id="quick-add-book-btn"><i class="bi bi-plus-circle"></i> Add Book</button>
+            </div>
+          </div>
+
+          <!-- Stats Cards Grid -->
+          <div class="card-grid">
+            <div class="stat-card">
+              <div class="stat-icon-wrapper"><i class="bi bi-bookshelf"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-total-books">34</span>
+                <span class="stat-label">Total Books</span>
+              </div>
+            </div>
+            <div class="stat-card success">
+              <div class="stat-icon-wrapper"><i class="bi bi-check-circle-fill"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-available-books">21</span>
+                <span class="stat-label">Available Copies</span>
+              </div>
+            </div>
+            <div class="stat-card info">
+              <div class="stat-icon-wrapper"><i class="bi bi-book-half"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-borrowed-books">13</span>
+                <span class="stat-label">Borrowed Books</span>
+              </div>
+            </div>
+            <div class="stat-card danger">
+              <div class="stat-icon-wrapper"><i class="bi bi-exclamation-triangle-fill"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-overdue-books">2</span>
+                <span class="stat-label">Overdue Books</span>
+              </div>
+            </div>
+            <div class="stat-card warning">
+              <div class="stat-icon-wrapper"><i class="bi bi-people"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="stat-students">148</span>
+                <span class="stat-label">Registered Students</span>
+              </div>
+            </div>
+          </div>
+
+          <!-- Analytics Charts Row -->
+          <div class="charts-grid">
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title"><i class="bi bi-graph-up"></i> Monthly Borrowing Statistics</h3>
+              </div>
+              <div style="height: 280px; position: relative;">
+                <canvas id="monthlyChart"></canvas>
+              </div>
+            </div>
+
+            <div class="chart-card">
+              <div class="chart-header">
+                <h3 class="chart-title"><i class="bi bi-pie-chart-fill"></i> Category Distribution</h3>
+              </div>
+              <div style="height: 280px; position: relative;">
+                <canvas id="categoryChart"></canvas>
+              </div>
+            </div>
+          </div>
+
+          <!-- Recent Activity & Borrow Summary Table -->
+          <div class="table-card">
+            <div class="table-toolbar">
+              <h3 style="font-size: 16px;"><i class="bi bi-clock-history"></i> Recent Book Issue & Return Activity</h3>
+              <a href="#" class="sidebar-link" data-view="issues" style="padding: 4px 8px; color: var(--primary);">View All Active Borrows &rarr;</a>
+            </div>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Student Name</th>
+                  <th>Book Title</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Status</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="recent-issues-table">
+                <!-- Dynamically Inserted -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- 2. BOOK CATALOG VIEW -->
+        <section id="view-books" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-book-half" style="color: var(--primary);"></i> Book Management Catalog</h1>
+              <p class="page-subtitle">Search, filter, edit, upload covers, generate QR codes and read eBooks.</p>
+            </div>
+            <button class="btn btn-primary" id="add-book-modal-trigger"><i class="bi bi-plus-lg"></i> Add New Book</button>
+          </div>
+
+          <!-- Filter Toolbar -->
+          <div class="table-card" style="padding: 16px; margin-bottom: 24px;">
+            <div style="display: flex; gap: 16px; align-items: center; flex-wrap: wrap;">
+              <div class="search-bar" style="flex: 1; min-width: 250px;">
+                <i class="bi bi-search"></i>
+                <input type="text" id="book-search-input" placeholder="Search by Title, Author, ISBN, Publisher...">
+              </div>
+              <select class="form-control" id="category-filter-select" style="width: 200px;">
+                <option value="">All Categories</option>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Database Systems">Database Systems</option>
+                <option value="Mathematics">Mathematics</option>
+              </select>
+              <button class="btn btn-outline" id="toggle-view-mode"><i class="bi bi-grid-fill"></i> Grid / Table</button>
+            </div>
+          </div>
+
+          <!-- Books Container -->
+          <div class="books-grid" id="books-container">
+            <!-- Dynamically populated books -->
+          </div>
+        </section>
+
+
+        <!-- 3. STUDENT DIRECTORY VIEW -->
+        <section id="view-students" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-people-fill" style="color: var(--primary);"></i> Student Management Directory</h1>
+              <p class="page-subtitle">Register new students, update information, and manage user roles.</p>
+            </div>
+            <button class="btn btn-primary" id="add-student-modal-trigger"><i class="bi bi-person-plus-fill"></i> Register Student</button>
+          </div>
+
+          <div class="table-card">
+            <div class="table-toolbar">
+              <div class="search-bar" style="width: 300px;">
+                <i class="bi bi-search"></i>
+                <input type="text" id="student-search-input" placeholder="Search students by name, email, department...">
+              </div>
+            </div>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Student Info</th>
+                  <th>Email</th>
+                  <th>Phone</th>
+                  <th>Department</th>
+                  <th>Year</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="students-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- 4. BOOK ISSUE & RETURN VIEW -->
+        <section id="view-issues" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-arrow-left-right" style="color: var(--primary);"></i> Book Issue & Return System</h1>
+              <p class="page-subtitle">Issue books to registered students, process returns, calculate due date fines, and renew loans.</p>
+            </div>
+            <button class="btn btn-primary" id="issue-book-modal-trigger"><i class="bi bi-box-arrow-up-right"></i> Issue New Book</button>
+          </div>
+
+          <div class="table-card">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Issue ID</th>
+                  <th>Student Name</th>
+                  <th>Book Title</th>
+                  <th>Issue Date</th>
+                  <th>Due Date</th>
+                  <th>Fine</th>
+                  <th>Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="issues-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- 5. FINE MANAGEMENT VIEW -->
+        <section id="view-fines" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-cash-stack" style="color: var(--primary);"></i> Fine Management</h1>
+              <p class="page-subtitle">Track per-day overdue penalties ($5.00/day) and update payment status.</p>
+            </div>
+          </div>
+
+          <div class="card-grid" style="margin-bottom: 24px;">
+            <div class="stat-card danger">
+              <div class="stat-icon-wrapper"><i class="bi bi-currency-dollar"></i></div>
+              <div class="stat-info">
+                <span class="stat-value" id="fine-total-unpaid">$85.00</span>
+                <span class="stat-label">Total Outstanding Unpaid Fines</span>
+              </div>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Fine ID</th>
+                  <th>Student Name</th>
+                  <th>Book Title</th>
+                  <th>Amount</th>
+                  <th>Payment Status</th>
+                  <th>Actions</th>
+                </tr>
+              </thead>
+              <tbody id="fines-table-body">
+                <!-- Dynamically populated -->
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- 6. REPORTS & EXPORTS VIEW -->
+        <section id="view-reports" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-file-earmark-bar-graph-fill" style="color: var(--primary);"></i> Reports & Document Generator</h1>
+              <p class="page-subtitle">Export system analytics and records to PDF, Excel, or Print.</p>
+            </div>
+            <div style="display: flex; gap: 12px;">
+              <button class="btn btn-outline" id="export-excel-btn"><i class="bi bi-file-earmark-excel"></i> Export Excel (CSV)</button>
+              <button class="btn btn-primary" id="export-pdf-btn"><i class="bi bi-file-earmark-pdf"></i> Export PDF / Print</button>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <div class="table-toolbar">
+              <select class="form-control" id="report-type-select" style="width: 250px;">
+                <option value="issues">Borrow & Return Log Report</option>
+                <option value="books">Book Inventory Report</option>
+                <option value="fines">Fine Collection Report</option>
+                <option value="students">Registered Students Report</option>
+              </select>
+            </div>
+            <div id="report-print-area">
+              <table class="custom-table" id="report-data-table">
+                <thead>
+                  <tr id="report-table-head">
+                    <!-- Dynamic -->
+                  </tr>
+                </thead>
+                <tbody id="report-table-body">
+                  <!-- Dynamic -->
+                </tbody>
+              </table>
+            </div>
+          </div>
+        </section>
+
+
+        <!-- 7. WISHLIST & QUEUE VIEW -->
+        <section id="view-reservations" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-bookmark-heart-fill" style="color: var(--primary);"></i> Wishlist & Book Reservation Queue</h1>
+              <p class="page-subtitle">Manage student book hold requests and personal wishlists.</p>
+            </div>
+          </div>
+          <div class="table-card">
+            <h3 style="margin-bottom: 16px;"><i class="bi bi-hourglass-split"></i> Pending Book Holds</h3>
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Request ID</th>
+                  <th>Student Name</th>
+                  <th>Book Requested</th>
+                  <th>Request Date</th>
+                  <th>Status</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td>#RES-101</td>
+                  <td>Sophia Martinez</td>
+                  <td>Clean Code: A Handbook of Agile Software Craftsmanship</td>
+                  <td>2026-07-25</td>
+                  <td><span class="status-badge pending">PENDING AVAILABILITY</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+
+        <!-- 8. AUDIT LOGS VIEW -->
+        <section id="view-audit" class="view-section">
+          <div class="page-header">
+            <div>
+              <h1 class="page-title"><i class="bi bi-shield-check" style="color: var(--primary);"></i> System Audit & Activity Logs</h1>
+              <p class="page-subtitle">Security audit trail of all library transactions and administrative actions.</p>
+            </div>
+          </div>
+
+          <div class="table-card">
+            <table class="custom-table">
+              <thead>
+                <tr>
+                  <th>Timestamp</th>
+                  <th>Username</th>
+                  <th>Action</th>
+                  <th>Details</th>
+                </tr>
+              </thead>
+              <tbody id="audit-logs-table">
+                <tr>
+                  <td>2026-07-28 09:00:00</td>
+                  <td>librarian@library.com</td>
+                  <td><span class="status-badge issued">ISSUE_BOOK</span></td>
+                  <td>Issued "Clean Code" to Alex Johnson</td>
+                </tr>
+                <tr>
+                  <td>2026-07-28 10:15:00</td>
+                  <td>admin@library.com</td>
+                  <td><span class="status-badge returned">ADD_BOOK</span></td>
+                  <td>Added new book "Calculus: Early Transcendentals"</td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </section>
+
+      </main>
+    </div>
+  </div>
+
+
+  <!-- ==================== MODALS ==================== -->
+
+  <!-- Add/Edit Book Modal -->
+  <div class="modal-overlay" id="book-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="book-modal-title"><i class="bi bi-book-fill"></i> Add New Book</h3>
+        <button class="icon-btn modal-close-btn" data-modal="book-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form id="book-form">
+        <div class="modal-body">
+          <input type="hidden" id="book-id">
+          <div class="form-group">
+            <label>Book Title *</label>
+            <input type="text" class="form-control" id="book-title" required placeholder="e.g. Design Patterns">
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Author *</label>
+              <input type="text" class="form-control" id="book-author" required placeholder="e.g. Erich Gamma">
+            </div>
+            <div class="form-group">
+              <label>ISBN *</label>
+              <input type="text" class="form-control" id="book-isbn" required placeholder="e.g. 978-0201633610">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Category *</label>
+              <select class="form-control" id="book-category" required>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Software Engineering">Software Engineering</option>
+                <option value="Artificial Intelligence">Artificial Intelligence</option>
+                <option value="Database Systems">Database Systems</option>
+                <option value="Mathematics">Mathematics</option>
+              </select>
+            </div>
+            <div class="form-group">
+              <label>Publisher</label>
+              <input type="text" class="form-control" id="book-publisher" placeholder="e.g. Addison-Wesley">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Shelf Number</label>
+              <input type="text" class="form-control" id="book-shelf" placeholder="e.g. CS-A1-04">
+            </div>
+            <div class="form-group">
+              <label>Total Copies *</label>
+              <input type="number" class="form-control" id="book-total-copies" min="1" value="5" required>
+            </div>
+            <div class="form-group">
+              <label>Edition</label>
+              <input type="text" class="form-control" id="book-edition" placeholder="e.g. 3rd Edition">
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Cover Image URL</label>
+            <input type="url" class="form-control" id="book-cover-url" placeholder="https://images.unsplash.com/...">
+          </div>
+          <div class="form-group">
+            <label>Description</label>
+            <textarea class="form-control" id="book-description" rows="3" placeholder="Short description of the book..."></textarea>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn" data-modal="book-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Save Book</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Issue Book Modal -->
+  <div class="modal-overlay" id="issue-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3><i class="bi bi-box-arrow-up-right"></i> Issue Book to Student</h3>
+        <button class="icon-btn modal-close-btn" data-modal="issue-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form id="issue-form">
+        <div class="modal-body">
+          <div class="form-group">
+            <label>Select Student *</label>
+            <select class="form-control" id="issue-student-select" required>
+              <!-- Dynamically Populated -->
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Select Book *</label>
+            <select class="form-control" id="issue-book-select" required>
+              <!-- Dynamically Populated -->
+            </select>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Issue Date</label>
+              <input type="date" class="form-control" id="issue-date">
+            </div>
+            <div class="form-group">
+              <label>Due Date (Default: +14 days)</label>
+              <input type="date" class="form-control" id="issue-due-date">
+            </div>
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn" data-modal="issue-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Confirm Issue</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Book Details & QR Code Modal -->
+  <div class="modal-overlay" id="book-detail-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="detail-book-title">Book Details</h3>
+        <button class="icon-btn modal-close-btn" data-modal="book-detail-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <div class="modal-body">
+        <div style="display: flex; gap: 24px; flex-wrap: wrap;">
+          <img id="detail-book-img" src="" alt="Book Cover" style="width: 150px; height: 210px; object-fit: cover; border-radius: 8px; box-shadow: var(--shadow-md);">
+          <div style="flex: 1;">
+            <p><strong>Author:</strong> <span id="detail-book-author"></span></p>
+            <p><strong>ISBN:</strong> <span id="detail-book-isbn"></span></p>
+            <p><strong>Category:</strong> <span id="detail-book-category"></span></p>
+            <p><strong>Shelf Location:</strong> <span id="detail-book-shelf" class="status-badge issued"></span></p>
+            <p><strong>Available Copies:</strong> <span id="detail-book-available"></span></p>
+            <p style="margin-top: 12px; font-size: 13px; color: var(--text-muted);" id="detail-book-desc"></p>
+          </div>
+          <div style="text-align: center; background: var(--bg-main); padding: 16px; border-radius: 12px; border: 1px solid var(--border-color);">
+            <div id="qr-code-canvas" style="width: 120px; height: 120px; background: white; margin: 0 auto 8px; padding: 6px; border-radius: 6px; display: flex; align-items: center; justify-content: center; font-size: 10px; color: black; font-weight: bold;">
+              [QR CODE GENERATED]
+            </div>
+            <span style="font-size: 11px; color: var(--text-muted);">Scan QR to Issue</span>
+          </div>
+        </div>
+      </div>
+      <div class="modal-footer">
+        <button class="btn btn-outline" id="read-ebook-btn"><i class="bi bi-file-pdf-fill" style="color: var(--danger);"></i> Read Sample eBook</button>
+        <button class="btn btn-primary modal-close-btn" data-modal="book-detail-modal">Close</button>
+      </div>
+    </div>
+  </div>
+
+
+  <!-- Add/Edit Student Modal -->
+  <div class="modal-overlay" id="student-modal">
+    <div class="modal-card">
+      <div class="modal-header">
+        <h3 id="student-modal-title"><i class="bi bi-person-plus-fill"></i> Register New Student</h3>
+        <button class="icon-btn modal-close-btn" data-modal="student-modal"><i class="bi bi-x-lg"></i></button>
+      </div>
+      <form id="student-form">
+        <div class="modal-body">
+          <input type="hidden" id="student-id">
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Full Name *</label>
+              <input type="text" class="form-control" id="student-name" required placeholder="e.g. John Doe">
+            </div>
+            <div class="form-group">
+              <label>Email Address *</label>
+              <input type="email" class="form-control" id="student-email" required placeholder="e.g. john@student.com">
+            </div>
+          </div>
+          <div style="display: grid; grid-template-columns: 1fr 1fr; gap: 16px;">
+            <div class="form-group">
+              <label>Phone Number</label>
+              <input type="tel" class="form-control" id="student-phone" placeholder="e.g. +1234567890">
+            </div>
+            <div class="form-group">
+              <label>Department *</label>
+              <select class="form-control" id="student-department" required>
+                <option value="Computer Science">Computer Science</option>
+                <option value="Electrical Engineering">Electrical Engineering</option>
+                <option value="Mechanical Engineering">Mechanical Engineering</option>
+                <option value="Mathematics">Mathematics</option>
+                <option value="Physics">Physics</option>
+                <option value="Information Technology">Information Technology</option>
+              </select>
+            </div>
+          </div>
+          <div class="form-group">
+            <label>Year of Study</label>
+            <select class="form-control" id="student-year">
+              <option value="1st Year">1st Year</option>
+              <option value="2nd Year">2nd Year</option>
+              <option value="3rd Year">3rd Year</option>
+              <option value="4th Year">4th Year</option>
+              <option value="Postgraduate">Postgraduate</option>
+            </select>
+          </div>
+          <div class="form-group">
+            <label>Address</label>
+            <input type="text" class="form-control" id="student-address" placeholder="e.g. Hostel Block A, Room 204">
+          </div>
+        </div>
+        <div class="modal-footer">
+          <button type="button" class="btn btn-outline modal-close-btn" data-modal="student-modal">Cancel</button>
+          <button type="submit" class="btn btn-primary">Register Student</button>
+        </div>
+      </form>
+    </div>
+  </div>
+
+
+  <!-- Toast Notification Container -->
+  <div class="toast-container" id="toast-container"></div>
+
+  <!-- Main JavaScript Modules -->
+  <script src="js/api.js"></script>
+  <script src="js/app.js"></script>
+</body>
+</html>
